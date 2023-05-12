@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,6 +87,17 @@ public class CustomerController {
         customer.setGlobalId(UUID.randomUUID().toString());
 
         return repository.save(customer).getGlobalId();
+    }
+
+    @PutMapping("/{id}/address")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCustomerAddress(@PathVariable("id") String globalId, @RequestBody String address) {
+        Customer customer = repository.findByGlobalId(globalId)
+                                      .orElseThrow(() -> new CustomerNotFoundException("Failed to update address. Customer with globalId [%s] does not exist".formatted(globalId)));
+
+        customer.setAddress(address);
+
+        repository.save(customer);
     }
 
     private boolean customerExists(CustomerDto customerDto) {

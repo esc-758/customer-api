@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -216,13 +217,25 @@ class CustomerControllerComponentTests {
     }
 
     @Test
-    void updateCustomerAddressSuccessfully() {
+    void updateCustomerAddressSuccessfully() throws Exception {
+        givenExistingCustomers();
 
+        mockMvc.perform(put("/api/customers/{id}/address", "3149927e-85db-4875-b1eb-f97df52a4ab6")
+                   .content("New address"))
+               .andExpect(status().isNoContent());
+
+        var updatedCustomer = customerRepository.findByGlobalId("3149927e-85db-4875-b1eb-f97df52a4ab6").get();
+        assertThat(updatedCustomer.getAddress()).isEqualTo("New address");
     }
 
     @Test
-    void updateCustomerAddressNotFound() {
+    void updateCustomerAddressNotFound() throws Exception {
+        givenExistingCustomers();
 
+        mockMvc.perform(put("/api/customers/{id}/address", "non_existent_global_Id")
+                   .content("New address"))
+               .andExpect(status().isNotFound())
+               .andExpect(content().string("CUSTOMER_NOT_FOUND"));
     }
 
     private void givenExistingCustomers() {
