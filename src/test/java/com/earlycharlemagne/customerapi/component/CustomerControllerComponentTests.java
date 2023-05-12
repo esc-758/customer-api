@@ -1,9 +1,8 @@
 package com.earlycharlemagne.customerapi.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.emptyArray;
-import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,6 +98,7 @@ class CustomerControllerComponentTests {
                               .andReturn();
         var expectedResponse = """
             {
+                "id": "3149927e-85db-4875-b1eb-f97df52a4ab6",
                 "firstName": "Jane",
                 "lastName": "Doe",
                 "email": "jane.doe@example.com",
@@ -134,12 +134,28 @@ class CustomerControllerComponentTests {
 
     @Test
     void findCustomersByFirstNameIsFound() throws Exception {
+        givenExistingCustomers();
 
+        mockMvc.perform(get("/api/customers")
+                   .queryParam("firstName", "Jane"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$", hasSize(1)))
+               .andExpect(jsonPath("$[0].firstName", is("Jane")))
+               .andExpect(jsonPath("$[0].lastName", is("Doe")))
+               .andExpect(jsonPath("$[0].email", is("jane.doe@example.com")))
+               .andExpect(jsonPath("$[0].age", is(31)))
+               .andExpect(jsonPath("$[0].address", is("123 street, Amsterdam")))
+               .andExpect(jsonPath("$[0].id", is("3149927e-85db-4875-b1eb-f97df52a4ab6")));
     }
 
     @Test
-    void findCustomersByFirstNameIsNotFound(){
+    void findCustomersByFirstNameIsEmpty() throws Exception {
+        givenExistingCustomers();
 
+        mockMvc.perform(get("/api/customers")
+                   .queryParam("firstName", "Non existent first name"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
@@ -172,11 +188,15 @@ class CustomerControllerComponentTests {
     }
 
     private void givenExistingCustomers() {
-        customerRepository.saveAll(List.of(
-            newCustomer("jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
-            newCustomer("jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
-            newCustomer("jackie.jack@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2"))
+        givenExistingCustomers(
+            newCustomer("Jane", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
+            newCustomer("Jen", "jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
+            newCustomer("Jackie", "jackie.jack@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2")
         );
+    }
+
+    private void givenExistingCustomers(Customer... customers) {
+        customerRepository.saveAll(List.of(customers));
     }
 
     private CustomerDto newCustomerRequest() {
@@ -194,9 +214,13 @@ class CustomerControllerComponentTests {
     }
 
     private Customer newCustomer(String email, String globalId) {
+        return newCustomer("Jane", email, globalId);
+    }
+
+    private Customer newCustomer(String firstName, String email, String globalId) {
         var customer = new Customer();
 
-        customer.setFirstName("Jane");
+        customer.setFirstName(firstName);
         customer.setLastName("Doe");
         customer.setAge(31);
         customer.setEmail(email);

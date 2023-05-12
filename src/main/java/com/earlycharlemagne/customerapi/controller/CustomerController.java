@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +29,13 @@ public class CustomerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CustomerDto> getCustomers() {
+    public List<CustomerDto> getCustomers(@RequestParam(required = false) String firstName) {
+        if (firstName != null) {
+            return repository.findByFirstName(firstName)
+                             .stream()
+                             .map(this::mapToCustomerDto)
+                             .toList();
+        }
         return repository.findAll()
                          .stream()
                          .map(this::mapToCustomerDto)
@@ -37,14 +44,15 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDto getCustomerById(@PathVariable String id) {
-        return repository.findByGlobalId(id)
+    public CustomerDto getCustomerById(@PathVariable("id") String globalId) {
+        return repository.findByGlobalId(globalId)
                          .map(this::mapToCustomerDto)
-                         .orElseThrow(() -> new CustomerNotFoundException("Customer with id [%s] does not exist".formatted(id)));
+                         .orElseThrow(() -> new CustomerNotFoundException("Customer with globalId [%s] does not exist".formatted(globalId)));
     }
 
     private CustomerDto mapToCustomerDto(Customer customer) {
         return CustomerDto.builder()
+                          .id(customer.getGlobalId())
                           .firstName(customer.getFirstName())
                           .lastName(customer.getLastName())
                           .age(customer.getAge())
