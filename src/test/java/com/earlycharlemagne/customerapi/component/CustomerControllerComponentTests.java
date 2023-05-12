@@ -1,10 +1,14 @@
 package com.earlycharlemagne.customerapi.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.emptyArray;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -17,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -29,6 +34,7 @@ import com.earlycharlemagne.customerapi.entity.Customer;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@Transactional
 class CustomerControllerComponentTests {
     private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -63,7 +69,7 @@ class CustomerControllerComponentTests {
         assertThat(savedCustomers).hasSize(1)
                                   .first()
                                   .usingRecursiveComparison()
-                                  .ignoringFields("id", "globalId", "address.id")
+                                  .ignoringFields("id", "globalId")
                                   .isEqualTo(newCustomer());
 
         var responseBody = response.getResponse().getContentAsString();
@@ -111,31 +117,47 @@ class CustomerControllerComponentTests {
     }
 
     @Test
-    void findCustomerByFirstNameIsFound(){
+    void getAllCustomersSuccessfully() throws Exception {
+        givenExistingCustomers();
+
+        mockMvc.perform(get("/api/customers"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$", hasSize(3)));
+    }
+
+    @Test
+    void getAllCustomersReturnsEmpty() throws Exception {
+        mockMvc.perform(get("/api/customers"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void findCustomersByFirstNameIsFound() throws Exception {
 
     }
 
     @Test
-    void findCustomerByFirstNameIsNotFound(){
+    void findCustomersByFirstNameIsNotFound(){
 
     }
 
     @Test
-    void findCustomerByLastNameIsFound(){
+    void findCustomersByLastNameIsFound(){
 
     }
 
     @Test
-    void findCustomerByLastNameIsNotFound(){
+    void findCustomersByLastNameIsNotFound(){
 
     }
 
     @Test
-    void findCustomerByFirstNameAndLastNameIsFound(){
+    void findCustomersByFirstNameAndLastNameIsFound(){
 
     }
     @Test
-    void findCustomerByFirstNameAndLastNameIsNotFound(){
+    void findCustomersByFirstNameAndLastNameIsNotFound(){
 
     }
 
@@ -148,12 +170,6 @@ class CustomerControllerComponentTests {
     void updateCustomerAddressNotFound() {
 
     }
-
-    @Test
-    void getAllCustomersSuccessfully() {
-
-    }
-
 
     private void givenExistingCustomers() {
         customerRepository.saveAll(List.of(

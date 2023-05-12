@@ -1,5 +1,6 @@
 package com.earlycharlemagne.customerapi.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerRepository repository;
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<CustomerDto> getCustomers() {
+        return repository.findAll()
+                         .stream()
+                         .map(this::mapToCustomerDto)
+                         .toList();
+    }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
