@@ -31,6 +31,12 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.OK)
     public List<CustomerDto> getCustomers(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
         if (firstName != null) {
+            if (lastName != null) {
+                return repository.findByFirstNameAndLastName(firstName, lastName)
+                                 .stream()
+                                 .map(this::mapToCustomerDto)
+                                 .toList();
+            }
             return repository.findByFirstName(firstName)
                              .stream()
                              .map(this::mapToCustomerDto)

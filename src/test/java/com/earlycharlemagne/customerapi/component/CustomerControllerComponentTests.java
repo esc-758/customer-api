@@ -185,12 +185,34 @@ class CustomerControllerComponentTests {
     }
 
     @Test
-    void findCustomersByFirstNameAndLastNameIsFound(){
+    void findCustomersByFirstNameAndLastNameIsFound() throws Exception {
+        givenExistingCustomers(
+            newCustomer("Jane", "Doe", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
+            newCustomer("John", "Doe", "john.doe@example.com", "c388d8ed-acf4-4dee-a63d-85ed9dde0bb0"),
+            newCustomer("Jen", "Jen", "jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
+            newCustomer("Jen", "Jansen", "jen.jansen@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2")
+        );
 
+        mockMvc.perform(get("/api/customers")
+                   .queryParam("firstName", "Jen")
+                   .queryParam("lastName", "Jen"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$", hasSize(1)))
+               .andExpect(jsonPath("$[0].firstName", is("Jen")))
+               .andExpect(jsonPath("$[0].lastName", is("Jen")))
+               .andExpect(jsonPath("$[0].email", is("jen.jen@example.com")))
+               .andExpect(jsonPath("$[0].age", is(31)))
+               .andExpect(jsonPath("$[0].address", is("123 street, Amsterdam")))
+               .andExpect(jsonPath("$[0].id", is("d435f409-69d8-4bae-ab61-92a585d2c27a")));
     }
-    @Test
-    void findCustomersByFirstNameAndLastNameIsNotFound(){
 
+    @Test
+    void findCustomersByFirstNameAndLastNameReturnsEmpty() throws Exception {
+        mockMvc.perform(get("/api/customers")
+                   .queryParam("firstName", "Jen")
+                   .queryParam("lastName", "Jen"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test

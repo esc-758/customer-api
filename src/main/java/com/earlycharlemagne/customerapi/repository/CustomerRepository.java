@@ -12,6 +12,7 @@ import com.earlycharlemagne.customerapi.entity.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByFirstName(String firstName);
     List<Customer> findByLastName(String lastName);
+    List<Customer> findByFirstNameAndLastName(String firstName, String lastName);
     Optional<Customer> findByGlobalId(String globalId);
     boolean existsByEmail(String email);
 }
