@@ -10,5 +10,5 @@ public class CustomerDto {
     String lastName;
     String email;
     Integer age;
-    AddressDto address;
+    String address;
 }

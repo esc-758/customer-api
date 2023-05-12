@@ -22,10 +22,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.earlycharlemagne.customerapi.dto.AddressDto;
 import com.earlycharlemagne.customerapi.dto.CustomerDto;
 import com.earlycharlemagne.customerapi.repository.CustomerRepository;
-import com.earlycharlemagne.customerapi.entity.Address;
 import com.earlycharlemagne.customerapi.entity.Customer;
 
 @SpringBootTest
@@ -99,12 +97,7 @@ class CustomerControllerComponentTests {
                 "lastName": "Doe",
                 "email": "jane.doe@example.com",
                 "age": 31,
-                "address": {
-                    "street": "5th street",
-                    "postCode": "1234AB",
-                    "city": "Zoetermeer",
-                    "country": "NL"
-                }
+                "address": "123 street, Amsterdam"
             }
             """;
         assertThat(response.getResponse().getContentAsString()).isEqualToIgnoringWhitespace(expectedResponse);
@@ -171,18 +164,12 @@ class CustomerControllerComponentTests {
     }
 
     private CustomerDto newCustomerRequest() {
-        var address = AddressDto.builder()
-                                .street("5th street")
-                                .postCode("1234AB")
-                                .city("Zoetermeer")
-                                .country("NL")
-                                .build();
         return  CustomerDto.builder()
                            .firstName("Jane")
                            .lastName("Doe")
                            .age(31)
                            .email("jane.doe@example.com")
-                           .address(address)
+                           .address("123 street, Amsterdam")
                            .build();
     }
 
@@ -198,19 +185,8 @@ class CustomerControllerComponentTests {
         customer.setAge(31);
         customer.setEmail(email);
         customer.setGlobalId(globalId);
-        customer.setAddress(newAddress());
+        customer.setAddress("123 street, Amsterdam");
 
         return customer;
-    }
-
-    private Address newAddress() {
-        var address = new Address();
-
-        address.setStreet("5th street");
-        address.setPostCode("1234AB");
-        address.setCity("Zoetermeer");
-        address.setCountry("NL");
-
-        return address;
     }
 }

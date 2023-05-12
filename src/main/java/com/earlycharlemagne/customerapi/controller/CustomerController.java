@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.earlycharlemagne.customerapi.dto.AddressDto;
 import com.earlycharlemagne.customerapi.dto.CustomerDto;
-import com.earlycharlemagne.customerapi.entity.Address;
 import com.earlycharlemagne.customerapi.entity.Customer;
 import com.earlycharlemagne.customerapi.exception.CustomerCreationException;
 import com.earlycharlemagne.customerapi.exception.CustomerNotFoundException;
@@ -41,20 +39,8 @@ public class CustomerController {
                           .lastName(customer.getLastName())
                           .age(customer.getAge())
                           .email(customer.getEmail())
-                          .address(mapToAddressDto(customer.getAddress()))
+                          .address(customer.getAddress())
                           .build();
-    }
-
-    private AddressDto mapToAddressDto(Address address) {
-        if (address == null) {
-            return null;
-        }
-        return AddressDto.builder()
-                         .street(address.getStreet())
-                         .postCode(address.getPostCode())
-                         .city(address.getCity())
-                         .country(address.getCountry())
-                         .build();
     }
 
     @PostMapping
@@ -81,23 +67,8 @@ public class CustomerController {
         customer.setLastName(customerDto.getLastName());
         customer.setAge(customerDto.getAge());
         customer.setEmail(customerDto.getEmail());
-        customer.setAddress(mapToAddress(customerDto.getAddress()));
+        customer.setAddress(customerDto.getAddress());
 
         return customer;
-    }
-
-    private Address mapToAddress(AddressDto addressDto) {
-        if (addressDto == null) {
-            return null;
-        }
-
-        Address address = new Address();
-
-        address.setStreet(addressDto.getStreet());
-        address.setPostCode(addressDto.getPostCode());
-        address.setCity(addressDto.getCity());
-        address.setCountry(addressDto.getCountry());
-
-        return address;
     }
 }
