@@ -133,7 +133,7 @@ class CustomerControllerComponentTests {
     }
 
     @Test
-    void findCustomersByFirstNameIsFound() throws Exception {
+    void findCustomersByFirstNameReturnsResults() throws Exception {
         givenExistingCustomers();
 
         mockMvc.perform(get("/api/customers")
@@ -149,7 +149,7 @@ class CustomerControllerComponentTests {
     }
 
     @Test
-    void findCustomersByFirstNameIsEmpty() throws Exception {
+    void findCustomersByFirstNameReturnsEmpty() throws Exception {
         givenExistingCustomers();
 
         mockMvc.perform(get("/api/customers")
@@ -159,13 +159,29 @@ class CustomerControllerComponentTests {
     }
 
     @Test
-    void findCustomersByLastNameIsFound(){
+    void findCustomersByLastNameReturnsResults() throws Exception {
+        givenExistingCustomers();
 
+        mockMvc.perform(get("/api/customers")
+                   .queryParam("lastName", "Doe"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$", hasSize(1)))
+               .andExpect(jsonPath("$[0].firstName", is("Jane")))
+               .andExpect(jsonPath("$[0].lastName", is("Doe")))
+               .andExpect(jsonPath("$[0].email", is("jane.doe@example.com")))
+               .andExpect(jsonPath("$[0].age", is(31)))
+               .andExpect(jsonPath("$[0].address", is("123 street, Amsterdam")))
+               .andExpect(jsonPath("$[0].id", is("3149927e-85db-4875-b1eb-f97df52a4ab6")));
     }
 
     @Test
-    void findCustomersByLastNameIsNotFound(){
+    void findCustomersByLastNameReturnsEmpty() throws Exception {
+        givenExistingCustomers();
 
+        mockMvc.perform(get("/api/customers")
+                   .queryParam("lastName", "Non existent last name"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
@@ -189,9 +205,9 @@ class CustomerControllerComponentTests {
 
     private void givenExistingCustomers() {
         givenExistingCustomers(
-            newCustomer("Jane", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
-            newCustomer("Jen", "jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
-            newCustomer("Jackie", "jackie.jack@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2")
+            newCustomer("Jane", "Doe", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
+            newCustomer("Jen", "Jen", "jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
+            newCustomer("Jackie", "Jack", "jackie.jack@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2")
         );
     }
 
@@ -218,10 +234,14 @@ class CustomerControllerComponentTests {
     }
 
     private Customer newCustomer(String firstName, String email, String globalId) {
+        return newCustomer(firstName, "Doe", email, globalId);
+    }
+
+    private Customer newCustomer(String firstName, String lastName, String email, String globalId) {
         var customer = new Customer();
 
         customer.setFirstName(firstName);
-        customer.setLastName("Doe");
+        customer.setLastName(lastName);
         customer.setAge(31);
         customer.setEmail(email);
         customer.setGlobalId(globalId);

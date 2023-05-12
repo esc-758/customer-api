@@ -29,13 +29,21 @@ public class CustomerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CustomerDto> getCustomers(@RequestParam(required = false) String firstName) {
+    public List<CustomerDto> getCustomers(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
         if (firstName != null) {
             return repository.findByFirstName(firstName)
                              .stream()
                              .map(this::mapToCustomerDto)
                              .toList();
         }
+
+        if (lastName != null) {
+            return repository.findByLastName(lastName)
+                             .stream()
+                             .map(this::mapToCustomerDto)
+                             .toList();
+        }
+
         return repository.findAll()
                          .stream()
                          .map(this::mapToCustomerDto)
