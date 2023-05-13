@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -60,14 +61,8 @@ class CustomerControllerValidationTest {
     @Test
     void customerRequestBodyIsNotValid() throws Exception {
         var emptyRequestBody = "{}";
-
-        var response = mockMvc.perform(post("/api/customers")
-                                  .contentType(APPLICATION_JSON)
-                                  .content(emptyRequestBody))
-                              .andExpect(status().isBadRequest())
-                              .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-                              .andReturn().getResponse();
-
+        var response = createCustomerWithInvalidData(emptyRequestBody).andReturn()
+                                                                      .getResponse();
         var validationErrors = OBJECT_MAPPER.readValue(response.getContentAsString(), ErrorResponse.class)
                                             .errors();
 
@@ -91,13 +86,9 @@ class CustomerControllerValidationTest {
               "firstName": "%s"
             }
             """.formatted(firstName);
+        var response = createCustomerWithInvalidData(invalidFirstName);
 
-        mockMvc.perform(post("/api/customers")
-                   .contentType(APPLICATION_JSON)
-                   .content(invalidFirstName))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='firstName' && @.message=='Length of first name must be between 2 and 50 characters')]").exists());
+        response.andExpect(jsonPath("$.errors[?(@.field=='firstName' && @.message=='Length of first name must be between 2 and 50 characters')]").exists());
     }
 
     @ParameterizedTest
@@ -111,13 +102,9 @@ class CustomerControllerValidationTest {
               "lastName": "%s"
             }
             """.formatted(lastName);
+        var response = createCustomerWithInvalidData(invalidLastName);
 
-        mockMvc.perform(post("/api/customers")
-                   .contentType(APPLICATION_JSON)
-                   .content(invalidLastName))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='lastName' && @.message=='Length of last name must be between 2 and 50 characters')]").exists());
+        response.andExpect(jsonPath("$.errors[?(@.field=='lastName' && @.message=='Length of last name must be between 2 and 50 characters')]").exists());
     }
 
     @Test
@@ -127,13 +114,9 @@ class CustomerControllerValidationTest {
               "email": "invalidEmail@"
             }
             """;
+        var response = createCustomerWithInvalidData(invalidEmail);
 
-        mockMvc.perform(post("/api/customers")
-                   .contentType(APPLICATION_JSON)
-                   .content(invalidEmail))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='email' && @.message=='Email is not valid')]").exists());
+        response.andExpect(jsonPath("$.errors[?(@.field=='email' && @.message=='Email is not valid')]").exists());
     }
 
     @Test
@@ -143,13 +126,9 @@ class CustomerControllerValidationTest {
               "age": "17"
             }
             """;
+        var response = createCustomerWithInvalidData(under18);
 
-        mockMvc.perform(post("/api/customers")
-                   .contentType(APPLICATION_JSON)
-                   .content(under18))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='age' && @.message=='Age must be 18 and above')]").exists());
+        response.andExpect(jsonPath("$.errors[?(@.field=='age' && @.message=='Age must be 18 and above')]").exists());
     }
 
     @ParameterizedTest
@@ -163,25 +142,17 @@ class CustomerControllerValidationTest {
               "address": "%s"
             }
             """.formatted(address);
+        var response = createCustomerWithInvalidData(invalidAddress);
 
-        mockMvc.perform(post("/api/customers")
-                   .contentType(APPLICATION_JSON)
-                   .content(invalidAddress))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='address' && @.message=='Length of address must be between 2 and 255 characters')]").exists());
+        response.andExpect(jsonPath("$.errors[?(@.field=='address' && @.message=='Length of address must be between 2 and 255 characters')]").exists());
     }
 
     @Test
     void updatingAddressWithEmptyRequestIsInvalid() throws Exception {
         var emptyRequest = "{}";
+        var response = updateAddressWithInvalidData(emptyRequest);
 
-        mockMvc.perform(put("/api/customers/123/address")
-                   .contentType(APPLICATION_JSON)
-                   .content(emptyRequest))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='address' && @.message=='Address is required')]").exists());
+        response.andExpect(jsonPath("$.errors[?(@.field=='address' && @.message=='Address is required')]").exists());
     }
 
     @ParameterizedTest
@@ -196,11 +167,24 @@ class CustomerControllerValidationTest {
             }
             """.formatted(address);
 
-        mockMvc.perform(put("/api/customers/123/address")
-                   .contentType(APPLICATION_JSON)
-                   .content(invalidAddress))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
-               .andExpect(jsonPath("$.errors[?(@.field=='address' && @.message=='Length of address must be between 2 and 255 characters')]").exists());
+        var response = updateAddressWithInvalidData(invalidAddress);
+
+        response.andExpect(jsonPath("$.errors[?(@.field=='address' && @.message=='Length of address must be between 2 and 255 characters')]").exists());
+    }
+
+    private ResultActions createCustomerWithInvalidData(String content) throws Exception {
+        return mockMvc.perform(post("/api/customers")
+                          .content(content)
+                          .contentType(APPLICATION_JSON))
+                      .andExpect(status().isBadRequest())
+                      .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+    }
+
+    private ResultActions updateAddressWithInvalidData(final String invalidAddress) throws Exception {
+        return mockMvc.perform(put("/api/customers/123/address")
+                          .contentType(APPLICATION_JSON)
+                          .content(invalidAddress))
+                      .andExpect(status().isBadRequest())
+                      .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
     }
 }

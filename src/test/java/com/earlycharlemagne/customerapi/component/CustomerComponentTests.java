@@ -16,44 +16,18 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.earlycharlemagne.customerapi.customer.dto.AddressRequest;
 import com.earlycharlemagne.customerapi.customer.dto.CustomerDto;
 import com.earlycharlemagne.customerapi.customer.dto.CustomerIdResponse;
-import com.earlycharlemagne.customerapi.customer.repository.CustomerRepository;
 import com.earlycharlemagne.customerapi.customer.entity.Customer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.earlycharlemagne.customerapi.customer.repository.CustomerRepository;
 
-@SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers
-@Transactional
 @WithMockUser(username = "api_user", password = "verysecurepassword")
-class CustomerComponentTests {
-    private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    @Container
-    private static final PostgreSQLContainer<?> POSTGRES_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.3");
-
-    @DynamicPropertySource
-    public static void overrideProperties(DynamicPropertyRegistry registry) {
-        POSTGRES_SQL_CONTAINER.start();
-
-        registry.add("spring.datasource.url", POSTGRES_SQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES_SQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", POSTGRES_SQL_CONTAINER::getPassword);
-        registry.add("spring.datasource.driver-class-name", POSTGRES_SQL_CONTAINER::getDriverClassName);
-    }
-
+class CustomerComponentTests implements AbstractComponentTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -62,9 +36,8 @@ class CustomerComponentTests {
     @Test
     void createNewCustomerSuccessfully() throws Exception {
         var requestBody = OBJECT_MAPPER.writeValueAsString(newCustomerRequest());
-        var response = mockMvc.perform(post("/api/customers")
-                                  .contentType(APPLICATION_JSON)
-                                  .content(requestBody))
+        var response = mockMvc.perform(post("/api/customers").contentType(APPLICATION_JSON)
+                                                             .content(requestBody))
                               .andExpect(status().isCreated())
                               .andReturn();
 
@@ -75,8 +48,10 @@ class CustomerComponentTests {
                                   .ignoringFields("id", "globalId")
                                   .isEqualTo(newCustomer());
 
-        var responseBody = OBJECT_MAPPER.readValue(response.getResponse().getContentAsString(), CustomerIdResponse.class);
-        var savedCustomerGlobalId = savedCustomers.get(0).getGlobalId();
+        var responseBody = OBJECT_MAPPER.readValue(response.getResponse()
+                                                           .getContentAsString(), CustomerIdResponse.class);
+        var savedCustomerGlobalId = savedCustomers.get(0)
+                                                  .getGlobalId();
         assertThat(responseBody.id()).isEqualTo(savedCustomerGlobalId);
     }
 
@@ -86,9 +61,8 @@ class CustomerComponentTests {
 
         var requestBody = OBJECT_MAPPER.writeValueAsString(newCustomerRequest());
 
-        mockMvc.perform(post("/api/customers")
-                   .contentType(APPLICATION_JSON)
-                   .content(requestBody))
+        mockMvc.perform(post("/api/customers").contentType(APPLICATION_JSON)
+                                              .content(requestBody))
                .andExpect(status().isBadRequest())
                .andExpect(jsonPath("$.errorCode", is("EMAIL_EXISTS")));
 
@@ -110,14 +84,16 @@ class CustomerComponentTests {
                 "address": "123 street, Amsterdam"
             }
             """;
-        assertThat(response.getResponse().getContentAsString()).isEqualToIgnoringWhitespace(expectedResponse);
+        assertThat(response.getResponse()
+                           .getContentAsString()).isEqualToIgnoringWhitespace(expectedResponse);
     }
 
     @Test
     void getCustomerByIdIsNotFound() throws Exception {
         mockMvc.perform(get("/api/customers/3149927e-85db-4875-b1eb-f97df52a4ab6"))
                .andExpect(status().isNotFound())
-               .andExpect(jsonPath("$.errorCode", is("CUSTOMER_NOT_FOUND")));;
+               .andExpect(jsonPath("$.errorCode", is("CUSTOMER_NOT_FOUND")));
+        ;
     }
 
     @Test
@@ -140,8 +116,7 @@ class CustomerComponentTests {
     void findCustomersByFirstNameReturnsResults() throws Exception {
         givenExistingCustomers();
 
-        mockMvc.perform(get("/api/customers")
-                   .queryParam("firstName", "jane"))
+        mockMvc.perform(get("/api/customers").queryParam("firstName", "jane"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$", hasSize(1)))
                .andExpect(jsonPath("$[0].firstName", is("Jane")))
@@ -156,8 +131,7 @@ class CustomerComponentTests {
     void findCustomersByFirstNameReturnsEmpty() throws Exception {
         givenExistingCustomers();
 
-        mockMvc.perform(get("/api/customers")
-                   .queryParam("firstName", "Non existent first name"))
+        mockMvc.perform(get("/api/customers").queryParam("firstName", "Non existent first name"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isEmpty());
     }
@@ -166,8 +140,7 @@ class CustomerComponentTests {
     void findCustomersByLastNameReturnsResults() throws Exception {
         givenExistingCustomers();
 
-        mockMvc.perform(get("/api/customers")
-                   .queryParam("lastName", "doe"))
+        mockMvc.perform(get("/api/customers").queryParam("lastName", "doe"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$", hasSize(1)))
                .andExpect(jsonPath("$[0].firstName", is("Jane")))
@@ -182,24 +155,20 @@ class CustomerComponentTests {
     void findCustomersByLastNameReturnsEmpty() throws Exception {
         givenExistingCustomers();
 
-        mockMvc.perform(get("/api/customers")
-                   .queryParam("lastName", "Non existent last name"))
+        mockMvc.perform(get("/api/customers").queryParam("lastName", "Non existent last name"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
     void findCustomersByFirstNameAndLastNameIsFound() throws Exception {
-        givenExistingCustomers(
-            newCustomer("Jane", "Doe", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
+        givenExistingCustomers(newCustomer("Jane", "Doe", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
             newCustomer("John", "Doe", "john.doe@example.com", "c388d8ed-acf4-4dee-a63d-85ed9dde0bb0"),
             newCustomer("Jen", "Jen", "jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
-            newCustomer("Jen", "Jansen", "jen.jansen@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2")
-        );
+            newCustomer("Jen", "Jansen", "jen.jansen@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2"));
 
-        mockMvc.perform(get("/api/customers")
-                   .queryParam("firstName", "jen")
-                   .queryParam("lastName", "jen"))
+        mockMvc.perform(get("/api/customers").queryParam("firstName", "jen")
+                                             .queryParam("lastName", "jen"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$", hasSize(1)))
                .andExpect(jsonPath("$[0].firstName", is("Jen")))
@@ -212,9 +181,8 @@ class CustomerComponentTests {
 
     @Test
     void findCustomersByFirstNameAndLastNameReturnsEmpty() throws Exception {
-        mockMvc.perform(get("/api/customers")
-                   .queryParam("firstName", "Jen")
-                   .queryParam("lastName", "Jen"))
+        mockMvc.perform(get("/api/customers").queryParam("firstName", "Jen")
+                                             .queryParam("lastName", "Jen"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isEmpty());
     }
@@ -224,12 +192,12 @@ class CustomerComponentTests {
         givenExistingCustomers();
 
         var addressRequest = OBJECT_MAPPER.writeValueAsString(new AddressRequest("New address"));
-        mockMvc.perform(put("/api/customers/{id}/address", "3149927e-85db-4875-b1eb-f97df52a4ab6")
-                   .contentType(APPLICATION_JSON)
-                   .content(addressRequest))
+        mockMvc.perform(put("/api/customers/{id}/address", "3149927e-85db-4875-b1eb-f97df52a4ab6").contentType(APPLICATION_JSON)
+                                                                                                  .content(addressRequest))
                .andExpect(status().isNoContent());
 
-        var updatedCustomer = customerRepository.findByGlobalId("3149927e-85db-4875-b1eb-f97df52a4ab6").get();
+        var updatedCustomer = customerRepository.findByGlobalId("3149927e-85db-4875-b1eb-f97df52a4ab6")
+                                                .get();
         assertThat(updatedCustomer.getAddress()).isEqualTo("New address");
     }
 
@@ -238,19 +206,16 @@ class CustomerComponentTests {
         givenExistingCustomers();
 
         var addressRequest = OBJECT_MAPPER.writeValueAsString(new AddressRequest("New address"));
-        mockMvc.perform(put("/api/customers/{id}/address", "non_existent_global_Id")
-                   .contentType(APPLICATION_JSON)
-                   .content(addressRequest))
+        mockMvc.perform(put("/api/customers/{id}/address", "non_existent_global_Id").contentType(APPLICATION_JSON)
+                                                                                    .content(addressRequest))
                .andExpect(status().isNotFound())
                .andExpect(jsonPath("$.errorCode", is("CUSTOMER_NOT_FOUND")));
     }
 
     private void givenExistingCustomers() {
-        givenExistingCustomers(
-            newCustomer("Jane", "Doe", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
+        givenExistingCustomers(newCustomer("Jane", "Doe", "jane.doe@example.com", "3149927e-85db-4875-b1eb-f97df52a4ab6"),
             newCustomer("Jen", "Jen", "jen.jen@example.com", "d435f409-69d8-4bae-ab61-92a585d2c27a"),
-            newCustomer("Jackie", "Jack", "jackie.jack@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2")
-        );
+            newCustomer("Jackie", "Jack", "jackie.jack@example.com", "9be65b33-e82a-4a62-b801-288e75ee16a2"));
     }
 
     private void givenExistingCustomers(Customer... customers) {
@@ -258,17 +223,18 @@ class CustomerComponentTests {
     }
 
     private CustomerDto newCustomerRequest() {
-        return  CustomerDto.builder()
-                           .firstName("Jane")
-                           .lastName("Doe")
-                           .age(31)
-                           .email("jane.doe@example.com")
-                           .address("123 street, Amsterdam")
-                           .build();
+        return CustomerDto.builder()
+                          .firstName("Jane")
+                          .lastName("Doe")
+                          .age(31)
+                          .email("jane.doe@example.com")
+                          .address("123 street, Amsterdam")
+                          .build();
     }
 
     private Customer newCustomer() {
-        return newCustomer("jane.doe@example.com", UUID.randomUUID().toString());
+        return newCustomer("jane.doe@example.com", UUID.randomUUID()
+                                                       .toString());
     }
 
     private Customer newCustomer(String email, String globalId) {
