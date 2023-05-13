@@ -2,6 +2,8 @@ package com.earlycharlemagne.customerapi.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.earlycharlemagne.customerapi.dto.AddressRequest;
 import com.earlycharlemagne.customerapi.dto.CustomerDto;
 import com.earlycharlemagne.customerapi.service.CustomerService;
 
@@ -49,13 +52,13 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String createCustomer(@RequestBody CustomerDto customerDto) {
+    public String createCustomer(@Valid @RequestBody CustomerDto customerDto) {
         return customerService.createNewCustomer(customerDto);
     }
 
     @PutMapping("/{id}/address")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateCustomerAddress(@PathVariable("id") String globalId, @RequestBody String address) {
-        customerService.updateExistingCustomerAddress(globalId, address);
+    public void updateCustomerAddress(@PathVariable("id") String globalId, @Valid @RequestBody AddressRequest addressRequest) {
+        customerService.updateExistingCustomerAddress(globalId, addressRequest.address());
     }
 }

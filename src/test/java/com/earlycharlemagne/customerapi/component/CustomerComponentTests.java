@@ -35,7 +35,7 @@ import com.earlycharlemagne.customerapi.entity.Customer;
 @AutoConfigureMockMvc
 @Testcontainers
 @Transactional
-class CustomerControllerComponentTests {
+class CustomerComponentTests {
     private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Container

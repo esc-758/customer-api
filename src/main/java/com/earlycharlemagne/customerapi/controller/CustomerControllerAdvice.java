@@ -1,33 +1,49 @@
 package com.earlycharlemagne.customerapi.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.earlycharlemagne.customerapi.dto.ErrorResponse;
+import com.earlycharlemagne.customerapi.dto.ValidationError;
 import com.earlycharlemagne.customerapi.exception.CustomerCreationException;
 import com.earlycharlemagne.customerapi.exception.CustomerNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ControllerAdvice
-public class CustomerControllerAdvice extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class CustomerControllerAdvice {
     @ExceptionHandler(CustomerNotFoundException.class)
-    ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException e) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    String handleCustomerNotFoundException(CustomerNotFoundException e) {
         log.error("handleCustomerNotFoundException [{}]", e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                             .body("CUSTOMER_NOT_FOUND");
+        return "CUSTOMER_NOT_FOUND";
     }
 
     @ExceptionHandler(CustomerCreationException.class)
-    ResponseEntity<String> handleCustomerCreationException(CustomerCreationException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String handleCustomerCreationException(CustomerCreationException e) {
         log.error("handleCustomerCreationException [{}]", e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body("EMAIL_EXISTS");
+        return "EMAIL_EXISTS";
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("handleMethodArgumentNotValidException [{}]", e.getMessage());
+        List<ValidationError> errors = e.getBindingResult()
+                                        .getFieldErrors()
+                                        .stream()
+                                        .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                                        .toList();
+
+        return new ErrorResponse("VALIDATION_ERROR", errors);
+    }
 }
