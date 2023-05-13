@@ -20,18 +20,18 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomerControllerAdvice {
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String handleCustomerNotFoundException(CustomerNotFoundException e) {
+    ErrorResponse handleCustomerNotFoundException(CustomerNotFoundException e) {
         log.error("handleCustomerNotFoundException [{}]", e.getMessage());
 
-        return "CUSTOMER_NOT_FOUND";
+        return new ErrorResponse("CUSTOMER_NOT_FOUND");
     }
 
     @ExceptionHandler(CustomerCreationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String handleCustomerCreationException(CustomerCreationException e) {
+    ErrorResponse handleCustomerCreationException(CustomerCreationException e) {
         log.error("handleCustomerCreationException [{}]", e.getMessage());
 
-        return "EMAIL_EXISTS";
+        return new ErrorResponse("EMAIL_EXISTS");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

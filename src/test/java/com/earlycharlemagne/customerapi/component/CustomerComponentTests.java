@@ -7,7 +7,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,11 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.earlycharlemagne.customerapi.dto.AddressRequest;
 import com.earlycharlemagne.customerapi.dto.CustomerDto;
 import com.earlycharlemagne.customerapi.repository.CustomerRepository;
 import com.earlycharlemagne.customerapi.entity.Customer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -87,7 +87,7 @@ class CustomerComponentTests {
                    .contentType(APPLICATION_JSON)
                    .content(requestBody))
                .andExpect(status().isBadRequest())
-               .andExpect(content().string("EMAIL_EXISTS"));
+               .andExpect(jsonPath("$.errorCode", is("EMAIL_EXISTS")));
 
     }
 
@@ -114,7 +114,7 @@ class CustomerComponentTests {
     void getCustomerByIdIsNotFound() throws Exception {
         mockMvc.perform(get("/api/customers/3149927e-85db-4875-b1eb-f97df52a4ab6"))
                .andExpect(status().isNotFound())
-               .andExpect(content().string("CUSTOMER_NOT_FOUND"));;
+               .andExpect(jsonPath("$.errorCode", is("CUSTOMER_NOT_FOUND")));;
     }
 
     @Test
@@ -220,8 +220,10 @@ class CustomerComponentTests {
     void updateCustomerAddressSuccessfully() throws Exception {
         givenExistingCustomers();
 
+        var addressRequest = OBJECT_MAPPER.writeValueAsString(new AddressRequest("New address"));
         mockMvc.perform(put("/api/customers/{id}/address", "3149927e-85db-4875-b1eb-f97df52a4ab6")
-                   .content("New address"))
+                   .contentType(APPLICATION_JSON)
+                   .content(addressRequest))
                .andExpect(status().isNoContent());
 
         var updatedCustomer = customerRepository.findByGlobalId("3149927e-85db-4875-b1eb-f97df52a4ab6").get();
@@ -232,10 +234,12 @@ class CustomerComponentTests {
     void updateCustomerAddressNotFound() throws Exception {
         givenExistingCustomers();
 
+        var addressRequest = OBJECT_MAPPER.writeValueAsString(new AddressRequest("New address"));
         mockMvc.perform(put("/api/customers/{id}/address", "non_existent_global_Id")
-                   .content("New address"))
+                   .contentType(APPLICATION_JSON)
+                   .content(addressRequest))
                .andExpect(status().isNotFound())
-               .andExpect(content().string("CUSTOMER_NOT_FOUND"));
+               .andExpect(jsonPath("$.errorCode", is("CUSTOMER_NOT_FOUND")));
     }
 
     private void givenExistingCustomers() {
