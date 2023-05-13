@@ -1,1 +1,16 @@
-
+spring:
+  profiles:
+    active: local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: "jdbc:postgresql:customerapi_db"
+    username: "postgres"
+    password: "postgres"
+  jpa:
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+    hibernate:
+      ddl-auto: update
