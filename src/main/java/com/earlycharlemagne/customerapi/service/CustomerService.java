@@ -26,21 +26,21 @@ public class CustomerService {
     }
 
     public List<CustomerDto> getCustomerByLastName(String lastName) {
-        return repository.findByLastName(lastName)
+        return repository.findByLastNameIgnoreCase(lastName)
                          .stream()
                          .map(this::mapToCustomerDto)
                          .toList();
     }
 
     public List<CustomerDto> getCustomerByFirstName(String firstName) {
-        return repository.findByFirstName(firstName)
+        return repository.findByFirstNameIgnoreCase(firstName)
                          .stream()
                          .map(this::mapToCustomerDto)
                          .toList();
     }
 
     public List<CustomerDto> getCustomerByFirstAndLastName(String firstName, String lastName) {
-        return repository.findByFirstNameAndLastName(firstName, lastName)
+        return repository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
                          .stream()
                          .map(this::mapToCustomerDto)
                          .toList();

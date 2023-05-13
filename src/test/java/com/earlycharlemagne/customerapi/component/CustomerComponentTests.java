@@ -39,7 +39,7 @@ class CustomerComponentTests {
     private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Container
-    private static final PostgreSQLContainer<?> POSTGRES_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:latest");
+    private static final PostgreSQLContainer<?> POSTGRES_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.3");
 
     @DynamicPropertySource
     public static void overrideProperties(DynamicPropertyRegistry registry) {
@@ -138,7 +138,7 @@ class CustomerComponentTests {
         givenExistingCustomers();
 
         mockMvc.perform(get("/api/customers")
-                   .queryParam("firstName", "Jane"))
+                   .queryParam("firstName", "jane"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$", hasSize(1)))
                .andExpect(jsonPath("$[0].firstName", is("Jane")))
@@ -164,7 +164,7 @@ class CustomerComponentTests {
         givenExistingCustomers();
 
         mockMvc.perform(get("/api/customers")
-                   .queryParam("lastName", "Doe"))
+                   .queryParam("lastName", "doe"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$", hasSize(1)))
                .andExpect(jsonPath("$[0].firstName", is("Jane")))
@@ -195,8 +195,8 @@ class CustomerComponentTests {
         );
 
         mockMvc.perform(get("/api/customers")
-                   .queryParam("firstName", "Jen")
-                   .queryParam("lastName", "Jen"))
+                   .queryParam("firstName", "jen")
+                   .queryParam("lastName", "jen"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$", hasSize(1)))
                .andExpect(jsonPath("$[0].firstName", is("Jen")))
