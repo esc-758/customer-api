@@ -1,4 +1,4 @@
-package com.earlycharlemagne.customerapi.exception;
+package com.earlycharlemagne.customerapi.customer.exception;
 
 public class CustomerNotFoundException extends RuntimeException {
     public CustomerNotFoundException(String message) {

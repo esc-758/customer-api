@@ -1,4 +1,4 @@
-package com.earlycharlemagne.customerapi.dto;
+package com.earlycharlemagne.customerapi.customer.dto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package com.earlycharlemagne.customerapi.controller;
+package com.earlycharlemagne.customerapi.customer.controller;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.earlycharlemagne.customerapi.dto.ErrorResponse;
-import com.earlycharlemagne.customerapi.dto.ValidationError;
-import com.earlycharlemagne.customerapi.exception.CustomerCreationException;
-import com.earlycharlemagne.customerapi.exception.CustomerNotFoundException;
+import com.earlycharlemagne.customerapi.customer.exception.CustomerCreationException;
+import com.earlycharlemagne.customerapi.customer.dto.ErrorResponse;
+import com.earlycharlemagne.customerapi.customer.dto.ValidationError;
+import com.earlycharlemagne.customerapi.customer.exception.CustomerNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 

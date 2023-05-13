@@ -1,4 +1,4 @@
-package com.earlycharlemagne.customerapi.dto;
+package com.earlycharlemagne.customerapi.customer.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;

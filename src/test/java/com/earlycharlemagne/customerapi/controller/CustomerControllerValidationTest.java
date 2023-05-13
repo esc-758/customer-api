@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -14,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import com.earlycharlemagne.customerapi.dto.ErrorResponse;
-import com.earlycharlemagne.customerapi.dto.ValidationError;
-import com.earlycharlemagne.customerapi.service.CustomerService;
+import com.earlycharlemagne.customerapi.customer.controller.CustomerController;
+import com.earlycharlemagne.customerapi.customer.dto.ErrorResponse;
+import com.earlycharlemagne.customerapi.customer.dto.ValidationError;
+import com.earlycharlemagne.customerapi.customer.service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(CustomerController.class)
@@ -27,7 +31,14 @@ class CustomerControllerValidationTest {
     @MockBean
     CustomerService customerService;
     @Autowired
+    WebApplicationContext webApplicationContext;
     MockMvc mockMvc;
+
+    @BeforeEach
+    public void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                                 .build();
+    }
 
     @Test
     void customerRequestBodyIsValid() throws Exception {

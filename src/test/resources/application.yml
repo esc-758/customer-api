@@ -1,4 +1,8 @@
+customerapi:
+  security:
+    username: "api_user"
+    password: 'verysecurepassword'
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update

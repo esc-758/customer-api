@@ -1,4 +1,4 @@
-package com.earlycharlemagne.customerapi.controller;
+package com.earlycharlemagne.customerapi.customer.controller;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.earlycharlemagne.customerapi.dto.AddressRequest;
-import com.earlycharlemagne.customerapi.dto.CustomerDto;
-import com.earlycharlemagne.customerapi.service.CustomerService;
+import com.earlycharlemagne.customerapi.customer.dto.AddressRequest;
+import com.earlycharlemagne.customerapi.customer.dto.CustomerDto;
+import com.earlycharlemagne.customerapi.customer.service.CustomerService;
 
 import lombok.RequiredArgsConstructor;
 

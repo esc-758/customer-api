@@ -14,7 +14,9 @@ docker-compose up -d
 ```
 ### Start Service
 ```
-mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=local"
+export API_USERNAME=api_user
+export API_PASSWORD=verysecurepassword
+mvn spring-boot:run
 ```
 
 See postman collection for available API endpoints.

@@ -1,4 +1,4 @@
-package com.earlycharlemagne.customerapi.entity;
+package com.earlycharlemagne.customerapi.customer.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

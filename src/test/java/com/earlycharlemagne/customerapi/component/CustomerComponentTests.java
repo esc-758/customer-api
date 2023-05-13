@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,16 +26,17 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.earlycharlemagne.customerapi.dto.AddressRequest;
-import com.earlycharlemagne.customerapi.dto.CustomerDto;
-import com.earlycharlemagne.customerapi.repository.CustomerRepository;
-import com.earlycharlemagne.customerapi.entity.Customer;
+import com.earlycharlemagne.customerapi.customer.dto.AddressRequest;
+import com.earlycharlemagne.customerapi.customer.dto.CustomerDto;
+import com.earlycharlemagne.customerapi.customer.repository.CustomerRepository;
+import com.earlycharlemagne.customerapi.customer.entity.Customer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
 @Transactional
+@WithMockUser(username = "api_user", password = "verysecurepassword")
 class CustomerComponentTests {
     private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

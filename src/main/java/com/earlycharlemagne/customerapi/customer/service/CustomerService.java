@@ -1,15 +1,15 @@
-package com.earlycharlemagne.customerapi.service;
+package com.earlycharlemagne.customerapi.customer.service;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.earlycharlemagne.customerapi.dto.CustomerDto;
-import com.earlycharlemagne.customerapi.entity.Customer;
-import com.earlycharlemagne.customerapi.exception.CustomerCreationException;
-import com.earlycharlemagne.customerapi.exception.CustomerNotFoundException;
-import com.earlycharlemagne.customerapi.repository.CustomerRepository;
+import com.earlycharlemagne.customerapi.customer.entity.Customer;
+import com.earlycharlemagne.customerapi.customer.exception.CustomerCreationException;
+import com.earlycharlemagne.customerapi.customer.dto.CustomerDto;
+import com.earlycharlemagne.customerapi.customer.exception.CustomerNotFoundException;
+import com.earlycharlemagne.customerapi.customer.repository.CustomerRepository;
 
 import lombok.RequiredArgsConstructor;
 

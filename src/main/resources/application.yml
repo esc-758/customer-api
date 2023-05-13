@@ -2,6 +2,10 @@ spring:
   profiles:
     active: local
 ---
+customerapi:
+  security:
+    username: ${API_USERNAME}
+    password: ${API_PASSWORD}
 spring:
   config:
     activate:
