@@ -1,0 +1,193 @@
+{
+	"info": {
+		"_postman_id": "5c18182a-5d09-411a-a34e-a24e0faca00a",
+		"name": "Customer API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7767239"
+	},
+	"item": [
+		{
+			"name": "Get all customers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all customer by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/customers/384d5354-fec9-4096-a611-d422d046d3b8",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers",
+						"384d5354-fec9-4096-a611-d422d046d3b8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get customers by first name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/customers?firstName=Jane",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers"
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "Jane"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get customers by last name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/customers?lastName=Doe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers"
+					],
+					"query": [
+						{
+							"key": "lastName",
+							"value": "Doe"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get customers by first and last name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/customers?firstName=Jane&lastName=Doe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers"
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "Jane"
+						},
+						{
+							"key": "lastName",
+							"value": "Doe"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new customer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Doe\",\n    \"email\": \"jane.doe@example.com\",\n    \"age\": 31,\n    \"address\": \"123 street, Amsterdam\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a customer's address",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"address\": \"updated address\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/customers/384d5354-fec9-4096-a611-d422d046d3b8/address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers",
+						"384d5354-fec9-4096-a611-d422d046d3b8",
+						"address"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
