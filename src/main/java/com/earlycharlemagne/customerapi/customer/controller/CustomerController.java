@@ -31,10 +31,11 @@ public class CustomerController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<CustomerDto> getCustomers(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
+        if (firstName != null && lastName != null) {
+            return customerService.getCustomerByFirstAndLastName(firstName, lastName);
+        }
+
         if (firstName != null) {
-            if (lastName != null) {
-                return customerService.getCustomerByFirstAndLastName(firstName, lastName);
-            }
             return customerService.getCustomerByFirstName(firstName);
         }
 
