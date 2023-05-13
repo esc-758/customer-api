@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.earlycharlemagne.customerapi.customer.dto.AddressRequest;
 import com.earlycharlemagne.customerapi.customer.dto.CustomerDto;
+import com.earlycharlemagne.customerapi.customer.dto.CustomerId;
 import com.earlycharlemagne.customerapi.customer.service.CustomerService;
 
 import lombok.RequiredArgsConstructor;
@@ -52,8 +53,10 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String createCustomer(@Valid @RequestBody CustomerDto customerDto) {
-        return customerService.createNewCustomer(customerDto);
+    public CustomerId createCustomer(@Valid @RequestBody CustomerDto customerDto) {
+        String globalId = customerService.createNewCustomer(customerDto);
+
+        return new CustomerId(globalId);
     }
 
     @PutMapping("/{id}/address")

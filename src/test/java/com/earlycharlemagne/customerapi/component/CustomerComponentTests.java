@@ -28,6 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.earlycharlemagne.customerapi.customer.dto.AddressRequest;
 import com.earlycharlemagne.customerapi.customer.dto.CustomerDto;
+import com.earlycharlemagne.customerapi.customer.dto.CustomerId;
 import com.earlycharlemagne.customerapi.customer.repository.CustomerRepository;
 import com.earlycharlemagne.customerapi.customer.entity.Customer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,9 +75,9 @@ class CustomerComponentTests {
                                   .ignoringFields("id", "globalId")
                                   .isEqualTo(newCustomer());
 
-        var responseBody = response.getResponse().getContentAsString();
+        var responseBody = OBJECT_MAPPER.readValue(response.getResponse().getContentAsString(), CustomerId.class);
         var savedCustomerGlobalId = savedCustomers.get(0).getGlobalId();
-        assertThat(responseBody).isEqualTo(savedCustomerGlobalId);
+        assertThat(responseBody.id()).isEqualTo(savedCustomerGlobalId);
     }
 
     @Test
