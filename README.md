@@ -4,6 +4,10 @@ API used to maintain a small set of customer data intended for marketing purpose
 
 ## Starting the application
 
+### Prerequisites
+- Java 17
+- Docker
+
 ### Start Docker containers
 ```
 docker-compose up -d
