@@ -31,7 +31,7 @@ public class CustomerControllerAdvice {
     ErrorResponse handleCustomerCreationException(CustomerCreationException e) {
         log.error("handleCustomerCreationException [{}]", e.getMessage());
 
-        return new ErrorResponse("EMAIL_EXISTS");
+        return new ErrorResponse("CUSTOMER_EXISTS");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

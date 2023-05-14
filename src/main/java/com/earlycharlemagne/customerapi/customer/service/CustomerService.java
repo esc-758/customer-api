@@ -65,7 +65,7 @@ public class CustomerService {
 
     public String createNewCustomer(CustomerDto customerDto) {
         if (customerExists(customerDto)) {
-            throw new CustomerCreationException("Failed to create customer. Email already exists");
+            throw new CustomerCreationException("Failed to create customer. Customer already exists");
         }
 
         Customer customer = mapToCustomer(customerDto);

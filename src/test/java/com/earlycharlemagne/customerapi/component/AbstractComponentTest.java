@@ -13,15 +13,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @Testcontainers
 @Transactional
-public interface AbstractComponentTest {
-    ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+abstract class AbstractComponentTest {
+    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Container
-    PostgreSQLContainer<?> POSTGRES_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.3");
+    static final PostgreSQLContainer<?> POSTGRES_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.3");
 
     @DynamicPropertySource
     static void overrideProperties(DynamicPropertyRegistry registry) {
-        CustomerComponentTests.POSTGRES_SQL_CONTAINER.start();
+        POSTGRES_SQL_CONTAINER.start();
 
         registry.add("spring.datasource.url", CustomerComponentTests.POSTGRES_SQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", CustomerComponentTests.POSTGRES_SQL_CONTAINER::getUsername);

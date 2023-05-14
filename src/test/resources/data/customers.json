@@ -1,0 +1,82 @@
+[
+  {
+    "firstName": "Bob",
+    "lastName": "Jenkins",
+    "email": "bob.jenkins@example.com",
+    "age": 33,
+    "address": "6th street, Almere",
+    "globalId": "ae820462-8827-49d6-9fa0-be9a0a68231f"
+  },
+  {
+    "firstName": "Bob",
+    "lastName": "Smith",
+    "email": "bob.smith@example.com",
+    "age": 55,
+    "address": "1st street, Amsterdam",
+    "globalId": "1b685e82-3743-42c3-a6ca-30f187121283"
+  },
+  {
+    "firstName": "Dave",
+    "lastName": "Yak",
+    "email": "dave.yak@example.com",
+    "age": 32,
+    "address": "2nd street, Den Haag",
+    "globalId": "df7acb3d-414c-4951-a227-ea1e18a1d4f0"
+  },
+  {
+    "firstName": "Jackie",
+    "lastName": "Jackson",
+    "email": "jackie.jackson@example.com",
+    "age": 46,
+    "address": "7th street, Zeist",
+    "globalId": "7c8371fe-d085-432d-a66d-7ccb90e48c28"
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Charles",
+    "email": "jennifer.charles@example.com",
+    "age": 18,
+    "address": "10th street, Amsterdam",
+    "globalId": "aae20c05-4e09-4048-92b2-cd0557409950"
+  },
+  {
+    "firstName": "Karen",
+    "lastName": "Tally",
+    "email": "karen.tally@example.com",
+    "age": 48,
+    "address": "4th street, Utrecht",
+    "globalId": "eb058cce-d4ca-4ea1-8d43-a281a381af35"
+  },
+  {
+    "firstName": "Mary",
+    "lastName": "Will",
+    "email": "mary.will@example.com",
+    "age": 28,
+    "address": "5th street, Rotterdam",
+    "globalId": "5d1b228c-2cb3-4255-9850-6def96c22c1d"
+  },
+  {
+    "firstName": "Rick",
+    "lastName": "Harolds",
+    "email": "rick.harolds@example.com",
+    "age": 23,
+    "address": "9th street, Rotterdam",
+    "globalId": "fbec8f28-a33f-4958-816c-1971cfadfa5a"
+  },
+  {
+    "firstName": "Sue",
+    "lastName": "Rice",
+    "email": "sue.rice@example.com",
+    "age": 42,
+    "address": "3rd street, Tilburg",
+    "globalId": "c9940b8c-680b-4e5b-95c3-b97a1f1ef692"
+  },
+  {
+    "firstName": "Tim",
+    "lastName": "Rice",
+    "email": "tim.rice@example.com",
+    "age": 45,
+    "address": "3rd street, Tilburg",
+    "globalId": "c40cc016-4296-4c8c-8589-43f57adb5038"
+  }
+]
