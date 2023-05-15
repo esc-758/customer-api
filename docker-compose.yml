@@ -5,3 +5,7 @@ services:
     container_name: customerapi_db
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_DB=customerapi_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
